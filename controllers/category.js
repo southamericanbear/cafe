@@ -87,7 +87,7 @@ const createCategory = async (req = request, res = response) => {
       });
     } catch (error) {
       console.log(error);
-      res.status.json({
+      res.status(400).json({
         msg: "An error occurred, check the console",
       });
     }
