@@ -103,6 +103,12 @@ const updateProduct = async (req = request, res = response) => {
   const productName = req.product.name;
 
   const { name = productName, price = 0 } = req.body;
+  const product = await Product.findOne({ name: name.toUpperCase() });
+  if (product) {
+    return res.status(400).json({
+      msg: `There is already a product created with the name ${product.name}`,
+    });
+  }
 
   try {
     await Product.findByIdAndUpdate(id, {
