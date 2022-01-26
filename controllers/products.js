@@ -33,6 +33,23 @@ const getAllProducts = async (req = request, res = response) => {
   }
 };
 
+const getProductByID = async (req = request, res = response) => {
+  const { id } = req.params;
+
+  try {
+    const product = await Product.findById(id).populate(populate);
+
+    res.status(200).json({
+      product,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      msg: "An error occurred please check the console",
+    });
+  }
+};
+
 const createproduct = async (req = request, res = response) => {
   const name = req.body.name.toUpperCase();
   const categoryID = req.body.category;
@@ -81,7 +98,49 @@ const createproduct = async (req = request, res = response) => {
   }
 };
 
+const updateProduct = async (req = request, res = response) => {
+  const { id } = req.params;
+  const productName = req.product.name;
+
+  const { name = productName, price = 0 } = req.body;
+
+  try {
+    await Product.findByIdAndUpdate(id, {
+      name: name.toUpperCase(),
+      price: price,
+    });
+    res.status(200).json({
+      msg: `Product ${name} is updated`,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      msg: "An error occurred, check the console",
+    });
+  }
+};
+
+const deleteProduct = async (req = request, res = response) => {
+  const { id } = req.params;
+
+  try {
+    const product = await Product.findByIdAndUpdate(id, { state: false });
+    res.status(200).json({
+      msg: "Product successfully deleted",
+      product,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({
+      msg: "An error occurred, check the console",
+    });
+  }
+};
+
 module.exports = {
   getAllProducts,
+  getProductByID,
   createproduct,
+  updateProduct,
+  deleteProduct,
 };
