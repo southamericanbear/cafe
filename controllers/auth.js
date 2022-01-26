@@ -1,6 +1,5 @@
 const bcryptjs = require("bcryptjs");
 const { response, request } = require("express");
-const { DefaultTransporter } = require("google-auth-library");
 const User = require("../models/User");
 const generateJWT = require("../utils/generate-jwt");
 const googleVerify = require("../utils/google-verify");

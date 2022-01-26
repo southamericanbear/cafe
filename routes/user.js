@@ -56,6 +56,7 @@ router.delete(
     haveRol("ADMIN_ROLE"),
     check("id", "ID not valid").isMongoId(),
     check("id").custom(userExistsWithID),
+    validationFields,
   ],
   usersDelete
 );
