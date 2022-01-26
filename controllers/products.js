@@ -1,13 +1,35 @@
 const { response, request } = require("express");
 const { Product, Category } = require("../models");
 
+const populate = {
+  path: "category",
+  select: "name",
+  Category,
+};
+
 const getAllProducts = async (req = request, res = response) => {
+  const { from = 0, limit = 5 } = req.query;
+
+  const query = { state: true };
+
   try {
+    const [total, products] = await Promise.all([
+      Product.countDocuments(query),
+      Product.find(query)
+        .skip(Number(from))
+        .limit(Number(limit))
+        .populate(populate),
+    ]);
+
     res.status(200).json({
-      msg: "products go here",
+      total,
+      products,
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      msg: "An error occurred, please check the logs",
+    });
   }
 };
 
