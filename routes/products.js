@@ -2,7 +2,7 @@ const { Router } = require("express");
 const { check } = require("express-validator");
 const {
   getAllProducts,
-  createproduct,
+  createProduct,
   getProductByID,
   updateProduct,
   deleteProduct,
@@ -34,7 +34,7 @@ router.post(
     check("name", "Name is required").not().isEmpty(),
     validationFields,
   ],
-  createproduct
+  createProduct
 );
 
 router.put(

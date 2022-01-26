@@ -1,5 +1,5 @@
 const { response, request } = require("express");
-const { Category, User } = require("../models");
+const { Category, User, Product } = require("../models");
 
 const populate = {
   path: "user",
@@ -37,7 +37,13 @@ const getCategoryById = async (req = request, res = response) => {
   const { id } = req.params;
 
   try {
-    const category = await Category.findById(id).populate(populate);
+    const category = await Category.findById(id)
+      .populate(populate)
+      .populate({
+        path: "product",
+        select: ["name"],
+        Product,
+      });
     res.status(200).json({
       category,
     });

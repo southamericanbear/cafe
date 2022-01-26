@@ -50,11 +50,11 @@ const getProductByID = async (req = request, res = response) => {
   }
 };
 
-const createproduct = async (req = request, res = response) => {
+const createProduct = async (req = request, res = response) => {
   const name = req.body.name.toUpperCase();
   const categoryID = req.body.category;
   const category = await Category.findById(categoryID);
-  console.log(category);
+
   const productDB = await Product.findOne({ name });
 
   if (productDB && productDB.state) {
@@ -87,6 +87,9 @@ const createproduct = async (req = request, res = response) => {
   const product = new Product(data);
 
   try {
+    await Category.findByIdAndUpdate(categoryID, {
+      products: [...category.products, product],
+    });
     await product.save();
 
     res.status(200).json({
@@ -146,7 +149,7 @@ const deleteProduct = async (req = request, res = response) => {
 module.exports = {
   getAllProducts,
   getProductByID,
-  createproduct,
+  createProduct,
   updateProduct,
   deleteProduct,
 };
