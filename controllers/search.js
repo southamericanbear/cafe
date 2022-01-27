@@ -30,7 +30,7 @@ const searchCategories = async (term = "", res = response) => {
   const isMongoID = ObjectId.isValid(term);
 
   if (isMongoID) {
-    const category = await Category.findById(term);
+    const category = await Category.findById(term).populate("products", "name");
     return res.status(200).json({
       results: category ? [category] : [],
     });
@@ -40,10 +40,33 @@ const searchCategories = async (term = "", res = response) => {
 
   const category = await Category.find({
     name: regex,
-  });
+    state: true,
+  }).populate("products", "name");
 
   res.status(200).json({
     results: category,
+  });
+};
+
+const searchProducts = async (term = "", res = response) => {
+  const isMongoID = ObjectId.isValid(term);
+
+  if (isMongoID) {
+    const product = await Product.findById(term).populate("category", "name");
+    return res.status(200).json({
+      results: product ? [product] : [],
+    });
+  }
+
+  const regexStr = new RegExp(term, "i");
+
+  const product = await Product.find({
+    $or: [{ name: regexStr }],
+    $and: [{ state: true }],
+  }).populate("category", "name");
+
+  res.status(200).json({
+    results: product,
   });
 };
 
@@ -64,8 +87,8 @@ const search = async (req = request, res = response) => {
       searchCategories(term, res);
       break;
     case "products":
+      searchProducts(term, res);
       break;
-
     default:
       res.status(500).json({
         msg: "An error in the server occurred check the console",
