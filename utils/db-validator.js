@@ -24,4 +24,14 @@ const userExistsWithID = async (id) => {
   }
 };
 
-module.exports = { roleValidator, emailExistsValidator, userExistsWithID };
+const validateCollection = async (collection = "", collections = []) => {
+  const includes = collections.includes(collection);
+  if (!includes) throw new Error(`The collection ${collection} is not allowed`);
+};
+
+module.exports = {
+  roleValidator,
+  emailExistsValidator,
+  userExistsWithID,
+  validateCollection,
+};
