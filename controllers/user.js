@@ -1,6 +1,7 @@
 const { response, request } = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
+const cloudinaryUpload = require("../utils/cloudinary-upload");
 
 const usersGet = async (req = request, res = response) => {
   const { from = 0, limit = 5 } = req.query;
@@ -19,7 +20,15 @@ const usersGet = async (req = request, res = response) => {
 
 const createUser = async (req, res = response) => {
   const { name, email, id, password, rol } = req.body;
-  const user = new User({ id, name, email, password, rol });
+  const protoUser = { name, email, id, password, rol };
+
+  if (req.files) {
+    protoUser.img = await cloudinaryUpload(req.files.file);
+  } else {
+    protoUser.img = `https://avatars.dicebear.com/api/male/${name}.svg?background=%230000ff`;
+  }
+
+  const user = new User(protoUser);
 
   const salt = bcrypt.genSaltSync();
   user.password = bcrypt.hashSync(password, salt);

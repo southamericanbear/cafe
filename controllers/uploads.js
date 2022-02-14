@@ -1,10 +1,10 @@
 const { request, response } = require("express");
-const path = require("path");
-const fs = require("fs");
+//const path = require("path");
+//const fs = require("fs");
 const { User, Product } = require("../models");
-const { uploadFile } = require("../utils");
+const cloudinaryUpload = require("../utils/cloudinary-upload");
 const cloudinary = require("cloudinary");
-cloudinary.config(process.env.CLOUDINARY_URL);
+//const { uploadFile } = require("../utils");
 
 // const updateImg = async (req = request, res = response) => {
 //   const { collection, id } = req.params;
@@ -74,17 +74,14 @@ const updateImg = async (req = request, res = response) => {
       });
   }
 
-  if (model.img) {
+  if (model.img && !model.img.split(".").includes("dicebear")) {
     const nameArr = model.img.split("/");
     const name = nameArr[nameArr.length - 1];
     const [public_id] = name.split(".");
     cloudinary.uploader.destroy(public_id);
   }
 
-  const { tempFilePath } = req.files.file;
-  const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
-
-  model.img = secure_url;
+  model.img = await cloudinaryUpload(req.files.file);
 
   await model.save();
 
