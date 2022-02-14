@@ -6,15 +6,6 @@ const { uploadFile } = require("../utils");
 const cloudinary = require("cloudinary");
 cloudinary.config(process.env.CLOUDINARY_URL);
 
-const upload = async (req = request, res = response) => {
-  try {
-    const name = await uploadFile(req.files, undefined, "products");
-    res.status(200).json({ name });
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-};
-
 // const updateImg = async (req = request, res = response) => {
 //   const { collection, id } = req.params;
 //   let model;
@@ -100,42 +91,4 @@ const updateImg = async (req = request, res = response) => {
   res.status(200).json(model);
 };
 
-const getImage = async (req = request, res = response) => {
-  const { collection, id } = req.params;
-  let model;
-
-  switch (collection) {
-    case "users":
-      model = await User.findById(id);
-      if (!model) {
-        return res.status(400).json({
-          msg: `A user with the id ${id} don't exists`,
-        });
-      }
-      break;
-    case "products":
-      model = await Product.findById(id);
-      if (!model) {
-        return res.status(400).json({
-          msg: `A product with the id ${id} don't exists`,
-        });
-      }
-      break;
-    default:
-      return res.status(500).json({
-        msg: "An extra validation is needed, I guess, you are not allowed to be here!",
-      });
-  }
-
-  if (model.img) {
-    const pathImg = path.join(__dirname, "../uploads", collection, model.img);
-
-    if (fs.existsSync(pathImg)) {
-      return res.sendFile(pathImg);
-    }
-  }
-  const pathImgNotFound = path.join(__dirname, "../assets/no-image.jpg");
-  return res.sendFile(pathImgNotFound);
-};
-
-module.exports = { upload, updateImg, getImage };
+module.exports = { updateImg };
