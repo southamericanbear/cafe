@@ -5,6 +5,10 @@ const OrderSchema = new Schema({
     type: Number,
     required: true,
   },
+  date: {
+    type: Date,
+    required: true,
+  },
   status: {
     type: String,
     required: true,

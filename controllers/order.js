@@ -1,12 +1,11 @@
 const { response, request } = require("express");
-const { Product, User } = require("../models");
+const { Product } = require("../models");
 const Order = require("../models/Order");
 
 const createOrder = async (req = request, res = response) => {
   const total = req.body.total;
-  const userID = req.body.user;
+  const date = new Date();
   const IDs = req.body.products;
-  const user = await User.findById(userID);
   const products = await Product.find({ _id: { $in: IDs } })
     .then(
       (product) => IDs.map((e) => product.find((s) => s._id.equals(e))) // compare
@@ -17,7 +16,8 @@ const createOrder = async (req = request, res = response) => {
 
   const data = {
     total,
-    user: userID,
+    date,
+    user: req.authenticatedUser._id,
     products,
   };
 
