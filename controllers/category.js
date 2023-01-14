@@ -50,7 +50,7 @@ const getCategoryById = async (req = request, res = response) => {
   } catch (error) {
     console.log(error);
     res.status(400).json({
-      msg: "An error occurred please check the console",
+      msg: "An error occurred please check the console.",
     });
   }
 };
